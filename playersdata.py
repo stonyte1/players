@@ -50,25 +50,37 @@ def fix_intdata(data):
                 fix_intdata(v)
 
 
-
-
 #Reads API and opens json:
 data = response_API.text 
 playersData = json.loads(data)
 fix_data(playersData)
 fix_intdata(playersData)
 
+#Uploading data to file:
+file = open('nbaplayers.txt', 'w')
+L = ['Name'.ljust(10, '_') + 'Surname'.ljust(20, '_') + 'Height(inches)'.ljust(20, '_') + 'Height(feet)'.ljust(10) + '\n\n']
+file.writelines(L)
 
-#Data about players
+#Data about players:
 allPlayers = len(playersData['data'])
 for a in range(0, allPlayers):
     playerName = playersData['data'][a]['first_name']
+    file.writelines(playerName.ljust(10))
     playerSurname = playersData['data'][a]['last_name']
+    file.writelines(playerSurname.ljust(25))
     playerHeightI = playersData['data'][a]['height_inches']
+    file.writelines(playerHeightI.ljust(20))
     playerHeightF = playersData['data'][a]['height_feet']
-    print('Players name: ' + playerName + ' ' + playerSurname + ' |Height inches: ' + playerHeightI + '|Height feet: ' + playerHeightF)
+    file.writelines(playerHeightF.ljust(10))
+    file.write('\n')
+    
    
-   
+
+
+
+
+
+
    
 
 

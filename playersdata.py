@@ -1,79 +1,53 @@
 import requests
 import json
-
-
-#Reads API and checks if there're no errors
-try:
-    response_API = requests.get('https://www.balldontlie.io/api/v1/players', timeout=5, data = {'key':'value'})
-    response_API.raise_for_status()
-    # Code here will only run if the request is successful
-except requests.exceptions.HTTPError as errh:
-    print(errh)
-except requests.exceptions.ConnectionError as errc:
-    print(errc)
-except requests.exceptions.Timeout as errt:
-    print(errt)
-except requests.exceptions.RequestException as err:
-    print(err)
-
-
-#Function to fix null values:
-def fix_data(data):
-    if type(data) is list:
-        for i, e in enumerate(data):
-            if e is None:
-                data[i] = '-'
-            else:
-              fix_data(e)
-
-    elif type(data) is dict:
-        for k, v in data.items():
-            if v is None:
-                data[k] = '-'
-            else:
-                fix_data(v)
-
-#Function to fix integers to strings:
-def fix_intdata(data):
-    if type(data) is list:
-        for i, e in enumerate(data):
-            if isinstance(e, int):
-                data[i] = str(e)
-            else:
-              fix_intdata(e)
-
-    elif type(data) is dict:
-        for k, v in data.items():
-            if isinstance(v, int):
-                data[k] = str(v)
-            else:
-                fix_intdata(v)
-
-
-#Reads API and opens json:
-data = response_API.text 
-playersData = json.loads(data)
-fix_data(playersData)
-fix_intdata(playersData)
-
-#Uploading data to file:
 file = open('nbaplayers.txt', 'w')
-L = ['Name'.ljust(10, '_') + 'Surname'.ljust(20, '_') + 'Height(inches)'.ljust(20, '_') + 'Height(feet)'.ljust(10) + '\n\n']
-file.writelines(L)
 
-#Data about players:
-allPlayers = len(playersData['data'])
-for a in range(0, allPlayers):
-    playerName = playersData['data'][a]['first_name']
-    file.writelines(playerName.ljust(10))
-    playerSurname = playersData['data'][a]['last_name']
-    file.writelines(playerSurname.ljust(25))
-    playerHeightI = playersData['data'][a]['height_inches']
-    file.writelines(playerHeightI.ljust(20))
-    playerHeightF = playersData['data'][a]['height_feet']
-    file.writelines(playerHeightF.ljust(10))
-    file.write('\n')
-    
+while True:
+    i = 0
+    i = i + 1
+    query = {'page': str(i), 'per_page':'25', 'search': ''}
+
+    #Reads API and checks if there're no errors
+    try:
+        response_API = requests.get('https://www.balldontlie.io/api/v1/players', timeout=50, params=query)
+        response_API.raise_for_status()
+        # Code here will only run if the request is successful
+    except requests.exceptions.HTTPError as errh:
+        print(errh)
+    except requests.exceptions.ConnectionError as errc:
+        print(errc)
+    except requests.exceptions.Timeout as errt:
+        print(errt)
+    except requests.exceptions.RequestException as err:
+        print(err)
+
+
+    #Reads API and opens json:
+    playersData = json.loads(response_API.text)
+
+
+    #Uploading data to file:
+
+    #Data about players:
+    allPlayers = len(playersData['data'])
+
+    for player in range(0, allPlayers):
+        item = playersData['data'][player]
+        if item['first_name'] != None:
+            file.write('Name: ')
+            file.writelines(str(item['first_name']))
+        if item['last_name'] != None:
+            file.write(' Surame: ')
+            file.writelines(str(item['last_name']))
+        if item['height_inches'] != None:
+            file.write(' Height(inches): ')
+            file.writelines(str(item['height_inches']))
+        if  item['height_feet'] != None:
+            file.write(' Height(feet): ')
+            file.writelines(str(item['height_feet']))
+        file.write('\n')
+file.close()
+        
    
 
 

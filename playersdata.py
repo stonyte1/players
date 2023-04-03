@@ -2,6 +2,7 @@ import requests
 import json
 from datetime import datetime, timedelta
 
+
 #Gets yesterdays date 
 yesterday_datetime = datetime.now() - timedelta(days=1)
 yesterday_date = yesterday_datetime.strftime('%Y-%m-%d')

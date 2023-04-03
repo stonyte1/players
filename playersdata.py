@@ -1,11 +1,10 @@
 import requests
 import json
-file = open('nbaplayers.txt', 'w')
 
+page_number = 0
 while True:
-    i = 0
-    i = i + 1
-    query = {'page': str(i), 'per_page':'25', 'search': ''}
+    page_number += 1
+    query = {'page': '1', 'per_page': '25'}
 
     #Reads API and checks if there're no errors
     try:
@@ -29,35 +28,25 @@ while True:
     #Uploading data to file:
 
     #Data about players:
+    file = open('nbaplayers.txt', 'w')
+    file.write('Name,Surname,Height(inches),Height(feet)\n')
     allPlayers = len(playersData['data'])
+    complete_data = ''
 
     for player in range(0, allPlayers):
         item = playersData['data'][player]
-        if item['first_name'] != None:
-            file.write('Name: ')
-            file.writelines(str(item['first_name']))
-        if item['last_name'] != None:
-            file.write(' Surame: ')
-            file.writelines(str(item['last_name']))
-        if item['height_inches'] != None:
-            file.write(' Height(inches): ')
-            file.writelines(str(item['height_inches']))
-        if  item['height_feet'] != None:
-            file.write(' Height(feet): ')
-            file.writelines(str(item['height_feet']))
-        file.write('\n')
+        if item['first_name'] is not None:
+            complete_data += str(item['first_name'])
+        complete_data += ','
+        if item['last_name'] is not None:
+            complete_data += str(item['last_name'])
+        complete_data += ','
+        if item['height_inches'] is not None:
+            complete_data += str(item['height_inches'])
+        complete_data += ','
+        if item['height_feet'] is not None:
+            complete_data += str(item['height_feet'])
+        complete_data += '\n'
+    file.write(complete_data)
+    break
 file.close()
-        
-   
-
-
-
-
-
-
-   
-
-
-   
-
-
